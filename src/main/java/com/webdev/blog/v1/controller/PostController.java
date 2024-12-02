@@ -1,7 +1,9 @@
 package com.webdev.blog.v1.controller;
 
 import com.webdev.blog.v1.dto.PostDto;
+import com.webdev.blog.v1.dto.PostResponse;
 import com.webdev.blog.v1.service.PostService;
+import com.webdev.blog.v1.util.AppConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +25,12 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize
+    ) {
+
+        PostResponse posts = postService.getAllPosts(pageNo, pageSize);
         return ResponseEntity.ok(posts);
     }
 

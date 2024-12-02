@@ -1,15 +1,19 @@
 package com.webdev.blog.v1.service.impl;
 
 import com.webdev.blog.v1.dto.PostDto;
+import com.webdev.blog.v1.dto.PostResponse;
 import com.webdev.blog.v1.entity.Post;
 import com.webdev.blog.v1.exception.ResourceNotFoundException;
 import com.webdev.blog.v1.repostitory.PostRepository;
 import com.webdev.blog.v1.service.PostService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -28,12 +32,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
 
-        return posts.stream()
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> posts = postRepository.findAll(pageable);
+        List<Post> listOfPosts = posts.getContent();
+
+        List<PostDto> content = listOfPosts.stream()
                 .map(post -> modelMapper.map(post, PostDto.class))
                 .toList();
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     @Override

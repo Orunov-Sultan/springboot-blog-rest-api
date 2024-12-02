@@ -1,12 +1,11 @@
 package com.webdev.blog.v1.service;
 
 import com.webdev.blog.v1.dto.PostDto;
-
-import java.util.List;
+import com.webdev.blog.v1.dto.PostResponse;
 
 public interface PostService {
     PostDto createPost(PostDto postDto);
-    List<PostDto> getAllPosts();
+    PostResponse getAllPosts(int pageNo, int pageSize);
     PostDto getPostById(Long id);
     PostDto updatePost(Long id, PostDto postDto);
     void deletePost(Long id);
