@@ -27,10 +27,11 @@ public class PostController {
     @GetMapping
     public ResponseEntity<PostResponse> getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy
     ) {
 
-        PostResponse posts = postService.getAllPosts(pageNo, pageSize);
+        PostResponse posts = postService.getAllPosts(pageNo, pageSize, sortBy);
         return ResponseEntity.ok(posts);
     }
 
