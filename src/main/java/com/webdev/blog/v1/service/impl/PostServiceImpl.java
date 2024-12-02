@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
@@ -21,5 +24,14 @@ public class PostServiceImpl implements PostService {
         Post savedPost = postRepository.save(post);
 
         return modelMapper.map(savedPost, PostDto.class);
+    }
+
+    @Override
+    public List<PostDto> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+
+        return posts.stream()
+                .map(post -> modelMapper.map(post, PostDto.class))
+                .toList();
     }
 }
