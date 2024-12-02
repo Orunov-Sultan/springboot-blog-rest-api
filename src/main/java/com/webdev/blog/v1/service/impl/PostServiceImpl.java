@@ -2,6 +2,7 @@ package com.webdev.blog.v1.service.impl;
 
 import com.webdev.blog.v1.dto.PostDto;
 import com.webdev.blog.v1.entity.Post;
+import com.webdev.blog.v1.exception.ResourceNotFoundException;
 import com.webdev.blog.v1.repostitory.PostRepository;
 import com.webdev.blog.v1.service.PostService;
 import lombok.AllArgsConstructor;
@@ -33,5 +34,13 @@ public class PostServiceImpl implements PostService {
         return posts.stream()
                 .map(post -> modelMapper.map(post, PostDto.class))
                 .toList();
+    }
+
+    @Override
+    public PostDto getPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("the post with the id: '" + id + "' was not found")
+        );
+        return modelMapper.map(post, PostDto.class);
     }
 }
