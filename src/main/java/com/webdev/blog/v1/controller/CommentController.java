@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/posts")
 @AllArgsConstructor
-public class CommetnController {
+public class CommentController {
     private CommentService commentService;
 
     @PostMapping("{postId}/comments")

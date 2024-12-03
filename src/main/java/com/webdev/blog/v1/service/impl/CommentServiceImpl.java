@@ -26,9 +26,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = modelMapper.map(commentDto, Comment.class);
 
         //Получаем пост по id
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
-        );
+        Post post = getPostById(postId);
 
         //связываем пост и сущность Comment
         comment.setPost(post);
@@ -51,38 +49,27 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto getCommentById(Long postId, Long commentId) {
         // Получаем пост
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
-        );
+        Post post = getPostById(postId);
 
         // Получаем коментарий
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
-        );
+        Comment comment = getCommentById(commentId);
 
         // Проверяем относится ли комент к посту
-        if (!comment.getPost().getId().equals(post.getId())){
-            throw new BlogApiExeption("Коментарий не относится к посту");
-        }
+        checkingCommentsBelongToPost(comment, post);
+
         return modelMapper.map(comment, CommentDto.class);
     }
 
     @Override
     public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
         // Получаем пост
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
-        );
+        Post post = getPostById(postId);
 
         // Получаем коментарий
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
-        );
+        Comment comment = getCommentById(commentId);
 
         // Проверяем относится ли комент к посту
-        if (!comment.getPost().getId().equals(post.getId())){
-            throw new BlogApiExeption("Коментарий не относится к посту");
-        }
+        checkingCommentsBelongToPost(comment, post);
 
         comment.setBody(commentDto.getBody());
         comment.setName(commentDto.getName());
@@ -96,19 +83,35 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long postId, Long commentId) {
         // Получаем пост
+        Post post = getPostById(postId);
+
+        // Получаем коментарий
+        Comment comment = getCommentById(commentId);
+
+        // Проверяем относится ли комент к посту
+        checkingCommentsBelongToPost(comment, post);
+
+        commentRepository.delete(comment);
+    }
+
+
+    private Post getPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
         );
+        return post;
+    }
 
-        // Получаем коментарий
+    private Comment getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
         );
+        return comment;
+    }
 
-        // Проверяем относится ли комент к посту
+    private void checkingCommentsBelongToPost(Comment comment, Post post){
         if (!comment.getPost().getId().equals(post.getId())){
             throw new BlogApiExeption("Коментарий не относится к посту");
         }
-        commentRepository.delete(comment);
     }
 }
