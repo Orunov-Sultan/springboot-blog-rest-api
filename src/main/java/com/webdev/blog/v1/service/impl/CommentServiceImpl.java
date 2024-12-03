@@ -61,9 +61,36 @@ public class CommentServiceImpl implements CommentService {
                 () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
         );
 
+        // Проверяем относится ли комент к посту
         if (!comment.getPost().getId().equals(post.getId())){
             throw new BlogApiExeption("Коментарий не относится к посту");
         }
         return modelMapper.map(comment, CommentDto.class);
+    }
+
+    @Override
+    public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
+        // Получаем пост
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
+        );
+
+        // Получаем коментарий
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
+        );
+
+        // Проверяем относится ли комент к посту
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiExeption("Коментарий не относится к посту");
+        }
+
+        comment.setBody(commentDto.getBody());
+        comment.setName(commentDto.getName());
+        comment.setEmail(commentDto.getEmail());
+
+        Comment updatedComment = commentRepository.save(comment);
+
+        return modelMapper.map(updatedComment, CommentDto.class);
     }
 }
