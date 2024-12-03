@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -92,5 +91,24 @@ public class CommentServiceImpl implements CommentService {
         Comment updatedComment = commentRepository.save(comment);
 
         return modelMapper.map(updatedComment, CommentDto.class);
+    }
+
+    @Override
+    public void deleteComment(Long postId, Long commentId) {
+        // Получаем пост
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Пост с таким id: '" + postId + "' не найден")
+        );
+
+        // Получаем коментарий
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Коментарий с таким id: '" + commentId + "' не найден")
+        );
+
+        // Проверяем относится ли комент к посту
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiExeption("Коментарий не относится к посту");
+        }
+        commentRepository.delete(comment);
     }
 }
