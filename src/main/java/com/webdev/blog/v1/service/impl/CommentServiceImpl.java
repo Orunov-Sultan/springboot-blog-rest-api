@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -34,5 +36,14 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(comment);
 
         return modelMapper.map(savedComment, CommentDto.class);
+    }
+
+    @Override
+    public List<CommentDto> getCommentByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        return comments.stream()
+                .map(comment -> modelMapper.map(comment, CommentDto.class))
+                .toList();
     }
 }
