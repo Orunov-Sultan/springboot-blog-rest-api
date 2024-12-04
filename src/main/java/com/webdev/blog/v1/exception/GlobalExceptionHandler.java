@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorDetails> handleBlogApiExeption(BlogApiExeption ex, WebRequest request) {
+    public ResponseEntity<ErrorDetails> handleBlogApiException(BlogApiException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage(ex.getMessage());
+        errorDetails.setTimestamp(LocalDateTime.now());
+        errorDetails.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        errorDetails.setPath(request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setMessage(ex.getMessage());
         errorDetails.setTimestamp(LocalDateTime.now());

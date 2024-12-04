@@ -3,7 +3,7 @@ package com.webdev.blog.v1.service.impl;
 import com.webdev.blog.v1.dto.CommentDto;
 import com.webdev.blog.v1.entity.Comment;
 import com.webdev.blog.v1.entity.Post;
-import com.webdev.blog.v1.exception.BlogApiExeption;
+import com.webdev.blog.v1.exception.BlogApiException;
 import com.webdev.blog.v1.exception.ResourceNotFoundException;
 import com.webdev.blog.v1.repostitory.CommentRepository;
 import com.webdev.blog.v1.repostitory.PostRepository;
@@ -111,7 +111,7 @@ public class CommentServiceImpl implements CommentService {
 
     private void checkingCommentsBelongToPost(Comment comment, Post post){
         if (!comment.getPost().getId().equals(post.getId())){
-            throw new BlogApiExeption("Коментарий не относится к посту");
+            throw new BlogApiException("Коментарий не относится к посту");
         }
     }
 }
