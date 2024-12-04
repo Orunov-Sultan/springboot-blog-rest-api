@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ErrorDetails> ResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setMessage(ex.getMessage());
         errorDetails.setTimestamp(LocalDateTime.now());
@@ -20,5 +20,16 @@ public class GlobalExceptionHandler {
         errorDetails.setPath(request.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorDetails> handleBlogApiExeption(BlogApiExeption ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage(ex.getMessage());
+        errorDetails.setTimestamp(LocalDateTime.now());
+        errorDetails.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        errorDetails.setPath(request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 }
