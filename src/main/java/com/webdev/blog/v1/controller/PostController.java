@@ -4,6 +4,7 @@ import com.webdev.blog.v1.dto.PostDto;
 import com.webdev.blog.v1.dto.PostResponse;
 import com.webdev.blog.v1.service.PostService;
 import com.webdev.blog.v1.util.AppConstants;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1/posts")
 @AllArgsConstructor
-public class PostController {
+public class  PostController {
 
     private PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         PostDto post = postService.createPost(postDto);
         return new ResponseEntity<>(post, HttpStatus.CREATED);
     }
@@ -41,7 +42,7 @@ public class PostController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable Long id, @RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> updatePost(@PathVariable Long id, @RequestBody @Valid PostDto postDto) {
         PostDto post = postService.updatePost(id, postDto);
         return ResponseEntity.ok(post);
     }
