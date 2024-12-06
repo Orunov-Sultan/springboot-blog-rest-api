@@ -76,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         });
         errors.put("timestamp", LocalDateTime.now().toString());
         errors.put("path", request.getDescription(false));
-        errors.put("statusCode", HttpStatus.BAD_REQUEST.toString());
+        errors.put("statusCode", String.valueOf(HttpStatus.BAD_REQUEST.value()));
         
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
