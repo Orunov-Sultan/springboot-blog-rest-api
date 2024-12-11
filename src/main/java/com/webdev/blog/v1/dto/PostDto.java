@@ -1,24 +1,26 @@
 package com.webdev.blog.v1.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class PostDto {
     private Long id;
 
     @NotEmpty
-    @Min(value = 2, message = "Длинна заголовка должна быть не короче 2 символов")
+    @Size(min = 2, message = "Длинна заголовка должна быть не короче 2 символов")
     private String title;
 
     @NotEmpty
-    @Min(value = 10, message = "Длинна описания поста должна быть не короче 10 символов")
-    private String description;
+    @Size(min = 10, message = "Длинна описания поста должна быть не короче 10 символов")
+    private String content;
 
     @NotEmpty
-    private String content;
-    private Set<CommentDto> comments;
+    private String description;
+    private List<CommentDto> comments;
 }
