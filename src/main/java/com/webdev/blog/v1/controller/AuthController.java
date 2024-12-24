@@ -1,5 +1,6 @@
 package com.webdev.blog.v1.controller;
 
+import com.webdev.blog.v1.dto.JWTAuthResponse;
 import com.webdev.blog.v1.dto.LoginDto;
 import com.webdev.blog.v1.dto.RegisterDto;
 import com.webdev.blog.v1.service.AuthService;
@@ -19,9 +20,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     @PostMapping("register")
