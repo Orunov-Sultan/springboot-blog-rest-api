@@ -4,10 +4,10 @@ import com.webdev.blog.v1.dto.CategoryDto;
 import com.webdev.blog.v1.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
@@ -20,8 +20,21 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto category = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(category, HttpStatus.CREATED);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {
+        CategoryDto categoryDto = categoryService.getCategory(id);
+        return ResponseEntity.ok(categoryDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        List<CategoryDto> categoriesDto = categoryService.getAllCategories();
+        return ResponseEntity.ok(categoriesDto);
     }
 }
