@@ -38,12 +38,14 @@ public class CategoryController {
         return ResponseEntity.ok(categoriesDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
         CategoryDto category = categoryService.updateCategory(id, categoryDto);
         return ResponseEntity.ok(category);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
