@@ -2,9 +2,12 @@ package com.webdev.blog.v1.service.impl;
 
 import com.webdev.blog.v1.dto.PostDto;
 import com.webdev.blog.v1.dto.PostResponse;
+import com.webdev.blog.v1.entity.Category;
 import com.webdev.blog.v1.entity.Post;
 import com.webdev.blog.v1.exception.ResourceNotFoundException;
+import com.webdev.blog.v1.repostitory.CategoryRepository;
 import com.webdev.blog.v1.repostitory.PostRepository;
+import com.webdev.blog.v1.service.CategoryService;
 import com.webdev.blog.v1.service.PostService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,10 +26,15 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
     private ModelMapper modelMapper;
+    private CategoryRepository categoryRepository;
 
     @Override
     public PostDto createPost(PostDto postDto) {
+        Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(
+                () -> new ResourceNotFoundException("The category you specified was not found")
+        );
         Post post = modelMapper.map(postDto, Post.class);
+        post.setCategory(category);
         Post savedPost = postRepository.save(post);
 
         return modelMapper.map(savedPost, PostDto.class);
@@ -66,12 +74,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePost(Long id, PostDto postDto) {
+
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("the post with the id: '" + id + "' was not found")
         );
+
+        Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(
+                () -> new ResourceNotFoundException("The category you specified was not found")
+        );
+
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
+        post.setCategory(category);
         Post updatedPost = postRepository.save(post);
 
         return modelMapper.map(updatedPost, PostDto.class);
@@ -83,5 +98,18 @@ public class PostServiceImpl implements PostService {
                 () -> new ResourceNotFoundException("the post with the id: '" + id + "' was not found")
         );
         postRepository.delete(post);
+    }
+
+    @Override
+    public List<PostDto> getPostsByCategoryId(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("The category you specified was not found")
+        );
+
+        List<Post> posts = postRepository.findByCategoryId(categoryId);
+
+        return posts.stream()
+                .map(post -> modelMapper.map(post, PostDto.class))
+                .toList();
     }
 }

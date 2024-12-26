@@ -23,4 +23,8 @@ public class PostDto {
     @NotEmpty
     private String description;
     private List<CommentDto> comments;
+
+    private Long categoryId;
+
+
 }
