@@ -34,8 +34,6 @@ public class AuthController {
             responseCode = "200",
             description = "Http Status 200 OK"
     )
-    @Parameter(name = "username", description = "String")
-    @Parameter(name = "password", description = "String")
     @PostMapping("login")
     public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
         String token = authService.login(loginDto);
