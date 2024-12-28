@@ -5,6 +5,7 @@ import com.webdev.blog.v1.dto.RegisterDto;
 import com.webdev.blog.v1.entity.Role;
 import com.webdev.blog.v1.entity.User;
 import com.webdev.blog.v1.exception.BlogApiException;
+import com.webdev.blog.v1.exception.ResourceNotFoundException;
 import com.webdev.blog.v1.repostitory.RoleRepository;
 import com.webdev.blog.v1.repostitory.UserRepository;
 import com.webdev.blog.v1.security.JwtTokenProvider;
@@ -64,7 +65,9 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow(
+                () -> new ResourceNotFoundException("Такая рольв Базе данных не обнаружена")
+        );
         roles.add(userRole);
 
         user.setRoles(roles);
